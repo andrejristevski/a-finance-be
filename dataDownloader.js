@@ -1,8 +1,7 @@
 const datesBetween = require('dates-between')
-const request = require('request');
+const fetch = require('node-fetch')
 
-import config from './config'
-
+let config = require('./config')
 
 // arrayScrapper(urls, function (successBodies, errors) {
 
@@ -34,21 +33,20 @@ const getDatesBetween = (startDate, endDate) => {
 const getRequestUrlsForCcy = (currencyConfig, startDate = '2018-02-28') => {
 
     const endDate = new Date();
-
     let requestUrls = getDatesBetween(startDate, endDate)
         .map(date => `${date.toISOString().substr(0, 10)}`)
         .map(dateString => `${config.restApiRatesUrl}/${dateString}?base=${currencyConfig.currency}`)
 
-    return requestUrls
+    return requestUrls;
 }
 
 const getDataFromRest = async (urls) => {
     let res = [];
     for (let url of urls) {
-        debugger
-        let dayData = await request.get(url)
-        res.push(dayData);
-        console.log(`${JSON.stringify(dayData)} data pushuva`);
+        let dayDataBody = await fetch(url)
+        let js = await dayDataBody.json()
+        res.push(js);
+        // console.log(`${JSON.stringify(dayData)} data pushuva`);
     }
     return res
 }
@@ -79,11 +77,10 @@ const downloadMissingData = async () => {
 
 const startDownloadingInterval = () => {
     // setInterval(() => {
-        debugger
     downloadMissingData();
     // }, 5 * 1000)
 
 
 }
 
-export default { startDownloadingInterval }
+module.exports = { startDownloadingInterval }

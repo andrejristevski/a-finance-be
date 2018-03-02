@@ -1,10 +1,14 @@
 
 
-import config from './config';
-import dataDownloader from './dataDownloader';
+const request = require('request');
+const dataDownloader = require('./dataDownloader');
+const express = require('express')
+const bodyParser = require('body-parser')
 
-import express from 'express'
 const app = express();
+
+app.use(bodyParser.json())
+
 app.get('/alive', function (req, res) {
     res.send('It lives')
 });

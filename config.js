@@ -1,4 +1,4 @@
-export default {
+let config = {
     'dbName': 'rates',
     'restApiRatesUrl': 'https://api.fixer.io/',
     'ratesCollection': "rates",
@@ -43,3 +43,5 @@ export default {
         ]
 
 }
+
+module.exports = config

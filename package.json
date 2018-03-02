@@ -7,15 +7,18 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
     "start": "npm run build && node dist/index.js",
+    "nodem": "nodemon index.js",
     "dev": "nodemon index.js --inspect --exec babel-node --presets babel-preset-env"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "array-scraper": "^1.2.1",
+    "body-parser": "^1.18.2",
     "dates-between": "^1.1.0",
     "dotenv": "^5.0.1",
     "express": "^4.16.2",
+    "node-fetch": "^2.0.0",
     "request": "^2.83.0"
   },
   "devDependencies": {
