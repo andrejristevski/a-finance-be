@@ -1,20 +1,8 @@
 const datesBetween = require('dates-between')
-const fetch = require('node-fetch')
+const rp = require('request-promise')
 
 let config = require('./config')
 
-// arrayScrapper(urls, function (successBodies, errors) {
-
-// } , ? options);
-
-// let options = {
-//     timeout: 50, //timeout between http calls 
-//     logtotal: false
-// }
-
-// for (const date of datesBetween(new Date('2016-01-01'), new Date('2016-02-01'))) {
-//     // console.log(date);
-// }
 
 
 const getLatestDownloadedForCcy = (currencyConfig) => {
@@ -35,42 +23,46 @@ const getRequestUrlsForCcy = (currencyConfig, startDate = '2018-02-28') => {
     const endDate = new Date();
     let requestUrls = getDatesBetween(startDate, endDate)
         .map(date => `${date.toISOString().substr(0, 10)}`)
-        .map(dateString => `${config.restApiRatesUrl}/${dateString}?base=${currencyConfig.currency}`)
+        .map(dateString => `${config.restApiRatesUrl}${dateString}?base=${currencyConfig.currency}`)
 
+        console.log(`${JSON.stringify(requestUrls)}`);
     return requestUrls;
 }
 
 const getDataFromRest = async (urls) => {
     let res = [];
     for (let url of urls) {
-        let dayDataBody = await fetch(url)
-        let js = await dayDataBody.json()
-        res.push(js);
+        const options = {
+            uri: url,
+            json: true // Automatically parses the JSON string in the response
+        };
+        let dayDataBody = await rp(options)
+        res.push(dayDataBody);
         // console.log(`${JSON.stringify(dayData)} data pushuva`);
     }
-    return res
+    return res;
 }
 
-const downloadMissingDataForCurrency = (currencyConfig) => {
-    return new Promise((resolve, reject) => {
+const downloadMissingDataForCurrency = async (currencyConfig) => {
 
-        // get lates date for currency
-        let latestDownloadedForCcy = getLatestDownloadedForCcy(currencyConfig);
-        let requestUrls = getRequestUrlsForCcy(currencyConfig, latestDownloadedForCcy);
+    // get lates date for currency
+    let latestDownloadedForCcy = getLatestDownloadedForCcy(currencyConfig);
+    let requestUrls = getRequestUrlsForCcy(currencyConfig, latestDownloadedForCcy);
 
-        console.log(requestUrls.length + ' dates should be downloaded')
+    console.log(requestUrls.length + ' dates should be downloaded')
 
-        let curencyData = getDataFromRest(requestUrls)
+    let curencyData = await getDataFromRest(requestUrls)
 
-        resolve(curencyData)
-    })
+    return curencyData;
     // download all other dates
 }
 
 const downloadMissingData = async () => {
     for (let curencyConfig of config.currencies) {
-        let sth = await downloadMissingDataForCurrency(curencyConfig);
+        let missingDataForCurrency = await downloadMissingDataForCurrency(curencyConfig);
         // console.log(`ahhhhhhhhhhhhhhhhhhh ${JSON.stringify(sth)}`);
+        let breakpoint = 0;
+        // insert data into db
     }
     // console.log(' 5s')
 }
