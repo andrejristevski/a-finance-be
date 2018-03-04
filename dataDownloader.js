@@ -26,6 +26,7 @@ const getRequestUrlsForCcy = (currencyConfig, startDate = '2018-02-28') => {
         .map(dateString => `${config.restApiRatesUrl}${dateString}?base=${currencyConfig.currency}`)
 
         console.log(`${JSON.stringify(requestUrls)}`);
+        
     return requestUrls;
 }
 
