@@ -15,18 +15,21 @@ const getDatesBetween = (startDate, endDate) => {
     for (let date of datesBetween(startDate, endDate)) {
         dates.push(date)
     }
+    // console.log(`${JSON.stringify(dates)}`);
     return dates;
 }
 
 const getRequestUrlsForCcy = (currencyConfig, startDate = '2018-02-28') => {
 
-    const endDate = new Date();
+    let endDate = new Date();
+    endDate.setDate(endDate.getDate() - 1)
+
     let requestUrls = getDatesBetween(startDate, endDate)
         .map(date => `${date.toISOString().substr(0, 10)}`)
         .map(dateString => `${config.restApiRatesUrl}${dateString}?base=${currencyConfig.currency}`)
 
-        console.log(`${JSON.stringify(requestUrls)}`);
-        
+    console.log(`${JSON.stringify(requestUrls)}`);
+
     return requestUrls;
 }
 
@@ -35,11 +38,10 @@ const getDataFromRest = async (urls) => {
     for (let url of urls) {
         const options = {
             uri: url,
-            json: true // Automatically parses the JSON string in the response
+            json: true
         };
         let dayDataBody = await rp(options)
         res.push(dayDataBody);
-        // console.log(`${JSON.stringify(dayData)} data pushuva`);
     }
     return res;
 }
@@ -50,7 +52,7 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
     let latestDownloadedForCcy = getLatestDownloadedForCcy(currencyConfig);
     let requestUrls = getRequestUrlsForCcy(currencyConfig, latestDownloadedForCcy);
 
-    console.log(requestUrls.length + ' dates should be downloaded')
+    // console.log(requestUrls.length + ' dates should be downloaded')
 
     let curencyData = await getDataFromRest(requestUrls)
 
@@ -58,11 +60,19 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
     // download all other dates
 }
 
+const saveCurencyData = (curencyConfig, missingDataForCurrency) => {
+
+
+
+}
+
 const downloadMissingData = async () => {
     for (let curencyConfig of config.currencies) {
         let missingDataForCurrency = await downloadMissingDataForCurrency(curencyConfig);
         // console.log(`ahhhhhhhhhhhhhhhhhhh ${JSON.stringify(sth)}`);
         let breakpoint = 0;
+
+        saveCurencyData(curencyConfig, missingDataForCurrency)
         // insert data into db
     }
     // console.log(' 5s')
