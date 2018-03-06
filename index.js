@@ -4,35 +4,36 @@ const request = require('request');
 const dataDownloader = require('./dataDownloader');
 const express = require('express')
 const bodyParser = require('body-parser')
-const MongoClient = require('mongodb').MongoClient;
-const dbUrl = 'mongodb://andrej:dwahvio,M@ds135069.mlab.com:35069/rates';
+
+const databaseService = require('./databaseService')
+
+// let mongoose =require('mongoose')
+// mongoose.connect(dbUrl)
+// var conn = mongoose.connection;             
+// conn.on('error', console.error.bind(console, 'connection error:'));  
 
 const app = express();
 app.use(bodyParser.json())
 
 app.get('/alive', function (req, res) {
-    res.send('It lives')
+  res.send('It lives')
 });
-
 
 app.listen(3000, function () {
-    console.log('Example app listening on port 3000!')
-    MongoClient.connect(dbUrl, function (err, db) {
-        if (err) {
-            console.error(`Database connection failed ${err}`)
-        } else {
-            console.log('Connection to db established')
-            dataDownloader.startDownloadingInterval()
-        }
-        // var dbo = db.db("mydb");
-        // var myobj = { name: "Company Inc", address: "Highway 37" };
-        // dbo.collection("customers").insertOne(myobj, function(err, res) {
-        //   if (err) throw err;
-        //   console.log("1 document inserted");
-        //   db.close();
-        // });
-    });
-
+  console.log('Example app listening on port 3000!')
 });
 
 
+var MongoClient = require('mongodb').MongoClient;
+
+var uri = "mongodb://andrej:dwahvio@ds157528.mlab.com:57528/proba";
+MongoClient.connect(uri, function (err, client) {
+  if (err) {
+    console.log(err);
+  } else {
+    databaseService.setDbclient(client)
+    dataDownloader.startDownloadingInterval();
+  }
+  // const collection = client.db("proba").collection("devices").insertOne({ aha: 'aha' })
+  // perform actions on the collection object
+});

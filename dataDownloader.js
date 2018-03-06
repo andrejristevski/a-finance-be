@@ -1,63 +1,58 @@
 const datesBetween = require('dates-between')
 const rp = require('request-promise')
-
+const dataService = require('./databaseService')
 let config = require('./config')
 
-
-
-const getLatestDownloadedForCcy = (currencyConfig) => {
-    // return '2000-01-01'
-    return '2018-02-28'
-}
 
 const getDatesBetween = (startDate, endDate) => {
     let dates = [];
     for (let date of datesBetween(startDate, endDate)) {
         dates.push(date)
     }
-    // console.log(`${JSON.stringify(dates)}`);
     return dates;
 }
 
-const getRequestUrlsForCcy = (currencyConfig, startDate = '2018-02-28') => {
+const shortIsoStringFromDate = (date) =>
+    date.toISOString().substr(0, 10)
 
-    let endDate = new Date();
-    endDate.setDate(endDate.getDate() - 1)
+const getUrlForDate = (date, currency = 'EUR') => {
+    let isoDate = shortIsoStringFromDate(date);
+    let url = `${config.restApiRatesUrl}${isoDate}?base=${currency}`
+    return url;
 
-    let requestUrls = getDatesBetween(startDate, endDate)
-        .map(date => `${date.toISOString().substr(0, 10)}`)
-        .map(dateString => `${config.restApiRatesUrl}${dateString}?base=${currencyConfig.currency}`)
-
-    console.log(`${JSON.stringify(requestUrls)}`);
-
-    return requestUrls;
 }
 
-const getDataFromRest = async (urls) => {
-    let res = [];
-    for (let url of urls) {
-        const options = {
-            uri: url,
-            json: true
-        };
-        let dayDataBody = await rp(options)
-        res.push(dayDataBody);
-    }
-    return res;
+const getDataFromRest = async (url) => {
+    const options = {
+        uri: url,
+        json: true
+    };
+    let dayDataBody = await rp(options)
+    return dayDataBody;
 }
 
 const downloadMissingDataForCurrency = async (currencyConfig) => {
 
     // get lates date for currency
-    let latestDownloadedForCcy = getLatestDownloadedForCcy(currencyConfig);
-    let requestUrls = getRequestUrlsForCcy(currencyConfig, latestDownloadedForCcy);
+    let latestDownloadedForCcy = dataService.getLatestDownloadedForCcy(currencyConfig);
 
-    // console.log(requestUrls.length + ' dates should be downloaded')
+    let endDate = new Date();
+    endDate.setDate(endDate.getDate() - 1)
 
-    let curencyData = await getDataFromRest(requestUrls)
+    let datesToBeDownloaded = getDatesBetween(latestDownloadedForCcy, endDate)
 
-    return curencyData;
+    for (date of datesToBeDownloaded) {
+
+        let url = getUrlForDate(date, currencyConfig.currency)
+        let curencyData = await getDataFromRest(url)
+        curencyData.exactDate = date;
+        curencyData.exactDateStr = shortIsoStringFromDate(date);
+
+        dataService.saveDayData(curencyData)
+        let breakpoint = 0;
+    }
     // download all other dates
+    return Promise.resolve();
 }
 
 const saveCurencyData = (curencyConfig, missingDataForCurrency) => {
