@@ -3,6 +3,7 @@ let config = {
     'restApiRatesUrl': 'https://api.fixer.io/',
     'ratesCollection': "rates",
     'connectionString': 'somecon string',
+    'logDates': true,
     'currencies':
         [
             {

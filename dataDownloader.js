@@ -39,6 +39,11 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
     let endDate = new Date();
     endDate.setDate(endDate.getDate() - 1)
 
+    if (latestDownloadedForCcy.toISOString().substr(0, 10) === endDate.toISOString().substr(0, 10)) {
+        console.log(`All dates already downloaded for ${currencyConfig.currency}`);
+        return;
+    }
+
     let datesToBeDownloaded = getDatesBetween(latestDownloadedForCcy, endDate)
 
     for (date of datesToBeDownloaded) {
@@ -51,26 +56,13 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
         await dataService.saveDayData(currencyConfig, curencyData)
         let breakpoint = 0;
     }
-    // download all other dates
-    return Promise.resolve();
-}
-
-const saveCurencyData = (curencyConfig, missingDataForCurrency) => {
-
-
-
 }
 
 const downloadMissingData = async () => {
     for (let curencyConfig of config.currencies) {
         let missingDataForCurrency = await downloadMissingDataForCurrency(curencyConfig);
-        // console.log(`ahhhhhhhhhhhhhhhhhhh ${JSON.stringify(sth)}`);
         let breakpoint = 0;
-
-        saveCurencyData(curencyConfig, missingDataForCurrency)
-        // insert data into db
     }
-    // console.log(' 5s')
 }
 
 const startDownloadingInterval = () => {
