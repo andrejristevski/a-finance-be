@@ -20,16 +20,16 @@ const updateLastDownloaded = async (currencyConfig, date) => {
     // self.db[self.dbConfig['metadataCollection']].update({'_id':id},{'latestDownloadedDate': data})
     // let metaData = getLatestDownloadedForCcy(currencyConfig)
     try {
+
         let ah = new Date('1995-04-02')
         let brasd = 0;
         console.log(`najgore`);
         let oldObject = await dbClient.db(`${currencyConfig.dbName}`).collection(`${currencyConfig.metadataCollection}`).findOne();
         console.log(`${oldObject} id of old object`);
-        let updated = await dbClient.db(`${currencyConfig.dbName}`).collection(`${currencyConfig.ratesCollection}`).updateOne({ '_id': oldObject._id }, { $set: { 'asd': 'asdfadf' } })
+        let updated = await dbClient.db(`${currencyConfig.dbName}`).collection(`${currencyConfig.metadataCollection}`).updateOne({ '_id': oldObject._id }, { $set: { 'latestDownloadedDate': ah } })
         console.log(`${updated} updated`);
         let findsome = await dbClient.db(`${currencyConfig.dbName}`).collection(`${currencyConfig.metadataCollection}`).findOne({ '_id': oldObject._id });
         console.log(`${findsome} latest taken`);
-
 
         console.log(`${JSON.stringify(oldObject)} asdasdasd`);
         return Promise.resolve()
