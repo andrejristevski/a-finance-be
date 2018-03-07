@@ -32,33 +32,37 @@ const getDataFromRest = async (url) => {
         return dayDataBody;
     } catch (e) {
         console.log(`Error downloading data for ${url} with error ${e}`);
-        throw new Error('err downl data')
     }
     return null;
 }
 
 const downloadMissingDataForDate = async (date, currencyConfig) => {
     let url = getUrlForDate(date, currencyConfig.currency)
+    let curencyData = await getDataFromRest(url);
+    if (curencyData) {
 
-    try {
-        let curencyData = await getDataFromRest(url);
-        if (curencyData) {
-            curencyData.exactDate = date;
-            curencyData.exactDateStr = shortIsoStringFromDate(date);
-            await dataService.saveDayData(currencyConfig, curencyData)
-        }
-    } catch (e) {
-        console.log(`Error downloading for date ${e}`);
-        let wait = await new Promise((res, rej) => {
-            setTimeout(() => {
-                console.log('resolving timeout');
-                res()
-            }, 200);
-        })
-        downloadMissingDataForDate(date, currencyConfig)
-        console.log('Trying again');
+        curencyData.exactDate = date;
+        curencyData.exactDateStr = shortIsoStringFromDate(date);
+        await dataService.saveDayData(currencyConfig, curencyData)
+
+    } else {
+
+        setTimeout(() => {
+            downloadMissingDataForCurrency(currencyConfig);
+            console.log(`Starting again and breaking once`);
+        }, 1000);
+        return
     }
 
+
+}
+
+const delay = (ms) => {
+    return new Promise((res, rej) => {
+        setTimeout(() => {
+            res()
+        }, ms)
+    })
 }
 
 const downloadMissingDataForCurrency = async (currencyConfig) => {
@@ -76,11 +80,8 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
     let datesToBeDownloaded = getDatesBetween(latestDownloadedForCcy, endDate);
 
     for (date of datesToBeDownloaded) {
-        try {
-            downloadMissingDataForDate(date, currencyConfig);
-        } catch (e) {
-            console.log('cant download for date');
-        }
+        downloadMissingDataForDate(date, currencyConfig)
+        await delay(1000)
     }
 }
 
