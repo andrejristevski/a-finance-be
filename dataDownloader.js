@@ -34,7 +34,7 @@ const getDataFromRest = async (url) => {
 const downloadMissingDataForCurrency = async (currencyConfig) => {
 
     // get lates date for currency
-    let latestDownloadedForCcy = dataService.getLatestDownloadedForCcy(currencyConfig);
+    let latestDownloadedForCcy = await dataService.getLatestDownloadedForCcy(currencyConfig);
 
     let endDate = new Date();
     endDate.setDate(endDate.getDate() - 1)
@@ -48,7 +48,7 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
         curencyData.exactDate = date;
         curencyData.exactDateStr = shortIsoStringFromDate(date);
 
-        dataService.saveDayData(curencyData)
+        await dataService.saveDayData(currencyConfig, curencyData)
         let breakpoint = 0;
     }
     // download all other dates

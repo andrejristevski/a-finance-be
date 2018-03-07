@@ -31,9 +31,8 @@ MongoClient.connect(uri, function (err, client) {
   if (err) {
     console.log(err);
   } else {
-    databaseService.setDbclient(client)
+    console.log(`connection established`);
+    databaseService.setDbclient(client);
     dataDownloader.startDownloadingInterval();
   }
-  // const collection = client.db("proba").collection("devices").insertOne({ aha: 'aha' })
-  // perform actions on the collection object
 });
