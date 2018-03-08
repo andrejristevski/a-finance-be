@@ -73,7 +73,7 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
     endDate.setDate(endDate.getDate() - 1)
 
     if (latestDownloadedForCcy.toISOString().substr(0, 10) === endDate.toISOString().substr(0, 10)) {
-        console.log(`All dates already downloaded for ${currencyConfig.currency}`);
+        console.log(`All dates already downloaded for ${currencyConfig.currency}`);F
         return;
     }
 
@@ -81,6 +81,8 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
 
     for (date of datesToBeDownloaded) {
         downloadMissingDataForDate(date, currencyConfig)
+        // TODO delay can be taken from config, this is not a problem usually because only one date will be downloaded, but without the delay
+        // if there are a lot of dates the server will stop us because we send to many requests
         await delay(1000)
     }
 }

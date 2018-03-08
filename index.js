@@ -4,8 +4,9 @@ const request = require('request');
 const dataDownloader = require('./dataDownloader');
 const express = require('express')
 const bodyParser = require('body-parser')
-
 const databaseService = require('./databaseService')
+
+require("dotenv").config();
 
 // let mongoose =require('mongoose')
 // mongoose.connect(dbUrl)
@@ -25,8 +26,9 @@ app.listen(3000, function () {
 
 
 var MongoClient = require('mongodb').MongoClient;
+var uri = process.env.CONNECTION_STRING;
+console.log(uri);
 
-var uri = "mongodb://andrej:dwahvio@ds157528.mlab.com:57528/proba";
 MongoClient.connect(uri, function (err, client) {
   if (err) {
     console.log(err);
