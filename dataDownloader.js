@@ -60,6 +60,7 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
     let latestDownloadedForCcy = await dataService.getLatestDownloadedForCcy(currencyConfig);
 
     let endDate = new Date();
+    endDate.setDate(endDate.getDate() - 1)
 
     if (latestDownloadedForCcy.toISOString().substr(0, 10) === endDate.toISOString().substr(0, 10)) {
         console.log(`All dates already downloaded for ${currencyConfig.currency}`);

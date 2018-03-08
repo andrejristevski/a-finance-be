@@ -10,7 +10,7 @@ let config = {
             'metadataCollection': 'metaDataEur',
             'ratesCollection': "ratesEur",
             'dbName': 'rates-prod',
-            'currency': 'EUR'
+            'currency': 'EUR',
         },
         {
             'metadataCollection': 'metaDataUSD',
