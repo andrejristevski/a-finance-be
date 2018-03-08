@@ -24,7 +24,6 @@ app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 });
 
-
 var MongoClient = require('mongodb').MongoClient;
 var uri = process.env.CONNECTION_STRING;
 console.log(uri);

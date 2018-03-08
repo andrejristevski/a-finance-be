@@ -4,41 +4,42 @@ let config = {
     'ratesCollection': "rates",
     'connectionString': 'somecon string',
     'logDates': true,
+    'delayBetweenCalls': 500,
     'currencies':
         [{
-            'metadataCollection': 'metaData',
-            'ratesCollection': "rates",
-            'dbName': 'rates',
+            'metadataCollection': 'metaDataEur',
+            'ratesCollection': "ratesEur",
+            'dbName': 'rates-prod',
             'currency': 'EUR'
         },
         {
             'metadataCollection': 'metaDataUSD',
             'ratesCollection': "ratesUSD",
-            'dbName': 'rates',
+            'dbName': 'rates-prod',
             'currency': 'USD',
         },
         {
             'metadataCollection': 'metaDataAUD',
             'ratesCollection': "ratesAUD",
-            'dbName': 'rates',
+            'dbName': 'rates-prod',
             'currency': 'AUD',
         },
         {
             'metadataCollection': 'metaDataCAD',
             'ratesCollection': "ratesCAD",
-            'dbName': 'rates',
+            'dbName': 'rates-prod',
             'currency': 'CAD',
         },
         {
             'metadataCollection': 'metaDataJPY',
             'ratesCollection': "ratesJPY",
-            'dbName': 'rates',
+            'dbName': 'rates-prod',
             'currency': 'JPY',
         },
         {
             'metadataCollection': 'metaDataCNY',
             'ratesCollection': "ratesCNY",
-            'dbName': 'rates',
+            'dbName': 'rates-prod',
             'currency': 'CNY',
         },
         ]

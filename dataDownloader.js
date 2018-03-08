@@ -40,20 +40,10 @@ const downloadMissingDataForDate = async (date, currencyConfig) => {
     let url = getUrlForDate(date, currencyConfig.currency)
     let curencyData = await getDataFromRest(url);
     if (curencyData) {
-
         curencyData.exactDate = date;
         curencyData.exactDateStr = shortIsoStringFromDate(date);
         await dataService.saveDayData(currencyConfig, curencyData)
-
-    } else {
-
-        setTimeout(() => {
-            downloadMissingDataForCurrency(currencyConfig);
-            console.log(`Starting again and breaking once`);
-        }, 1000);
-        return
     }
-
 
 }
 
@@ -70,11 +60,10 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
     let latestDownloadedForCcy = await dataService.getLatestDownloadedForCcy(currencyConfig);
 
     let endDate = new Date();
-    endDate.setDate(endDate.getDate() - 1)
 
     if (latestDownloadedForCcy.toISOString().substr(0, 10) === endDate.toISOString().substr(0, 10)) {
-        console.log(`All dates already downloaded for ${currencyConfig.currency}`);F
-        return;
+        console.log(`All dates already downloaded for ${currencyConfig.currency}`);
+        return Promise.resolve();
     }
 
     let datesToBeDownloaded = getDatesBetween(latestDownloadedForCcy, endDate);
@@ -83,27 +72,34 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
         downloadMissingDataForDate(date, currencyConfig)
         // TODO delay can be taken from config, this is not a problem usually because only one date will be downloaded, but without the delay
         // if there are a lot of dates the server will stop us because we send to many requests
-        await delay(1000)
+        await delay(config.delayBetweenCalls)
     }
 }
 
 const downloadMissingData = async () => {
     let startTime = new Date();
     for (let curencyConfig of config.currencies) {
+
         let startTimeCurrency = new Date();
-        await downloadMissingDataForCurrency(curencyConfig);
+        console.log(`Downloading for ${curencyConfig.currency}`);
+        try {
+            await downloadMissingDataForCurrency(curencyConfig);
+        } catch (e) {
+            console.log(`${e}`);
+        }
+
         let endTimeCurrency = new Date();
-        console.log(```For currency ${curencyConfig.currency} it took
-         ${(endTimeCurrency - startTimeCurrency) / 1000} seconds ```);
+        console.log(`For currency ${curencyConfig.currency} it took      ${(endTimeCurrency - startTimeCurrency) / 1000} seconds `);
     }
     console.log(```For all currencies it took
-         ${(new Date() - startTimeCurrency) / 1000} seconds ```);
+         ${(new Date() - startTime) / 1000} seconds ```);
 }
 
 const startDownloadingInterval = () => {
-    // setInterval(() => {
     downloadMissingData();
-    // }, 5 * 1000)
+    setInterval(() => {
+        downloadMissingData();
+    }, 24 * 60 * 60 * 1000)
 
 
 }
