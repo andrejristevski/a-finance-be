@@ -50,7 +50,7 @@ const downloadMissingDataForDate = async (date, currencyConfig) => {
 const delay = async (ms) => {
     await new Promise((res, rej) => {
         setTimeout(() => {
-            console.log(`waiting for ${ms}`);
+            // console.log(`waiting for ${ms}`);
             res()
         }, ms)
     })
@@ -67,13 +67,13 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
         return
     }
 
+    endDate.setDate(endDate.getDate()-1);
     let datesToBeDownloaded = getDatesBetween(latestDownloadedForCcy, endDate);
 
     for (date of datesToBeDownloaded) {
 
         await delay(2000)
         await downloadMissingDataForDate(date, currencyConfig).catch(e => {
-            console.log(`Waiting 2 s before making new requests`);
             delay(config.delayBetweenCalls)
             downloadMissingDataForDate(date, currencyConfig)
         })
@@ -85,7 +85,7 @@ const downloadMissingData = async () => {
     let startTime = new Date();
     for (let curencyConfig of config.currencies) {
 
-        // dataService.removeold(curencyConfig)
+        // dataService.removeolder(curencyConfig)
 
         let startTimeCurrency = new Date();
         console.log(`Downloading for ${curencyConfig.currency}`);
@@ -98,12 +98,11 @@ const downloadMissingData = async () => {
         let endTimeCurrency = new Date();
         console.log(`For currency ${curencyConfig.currency} it took      ${(endTimeCurrency - startTimeCurrency) / 1000} seconds `);
     }
-    console.log(```For all currencies it took
-         ${(new Date() - startTime) / 1000} seconds ```);
-         let brp = 0
+    console.log(`For all currencies it took   ${(new Date() - startTime) / 1000} seconds `);
 }
 
 const startDownloadingInterval = () => {
+        downloadMissingData()
         setInterval(() => {
             downloadMissingData().catch(e => {
                 console.log(`${e}`);
