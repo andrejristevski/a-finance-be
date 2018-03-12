@@ -47,9 +47,10 @@ const downloadMissingDataForDate = async (date, currencyConfig) => {
 
 }
 
-const delay = (ms) => {
-    return new Promise((res, rej) => {
+const delay = async (ms) => {
+    await new Promise((res, rej) => {
         setTimeout(() => {
+            console.log(`waiting for ${ms}`);
             res()
         }, ms)
     })
@@ -60,26 +61,31 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
     let latestDownloadedForCcy = await dataService.getLatestDownloadedForCcy(currencyConfig);
 
     let endDate = new Date();
-    endDate.setDate(endDate.getDate() - 1)
 
     if (latestDownloadedForCcy.toISOString().substr(0, 10) === endDate.toISOString().substr(0, 10)) {
         console.log(`All dates already downloaded for ${currencyConfig.currency}`);
-        return Promise.resolve();
+        return
     }
 
     let datesToBeDownloaded = getDatesBetween(latestDownloadedForCcy, endDate);
 
     for (date of datesToBeDownloaded) {
-        downloadMissingDataForDate(date, currencyConfig)
-        // TODO delay can be taken from config, this is not a problem usually because only one date will be downloaded, but without the delay
-        // if there are a lot of dates the server will stop us because we send to many requests
-        await delay(config.delayBetweenCalls)
+
+        await delay(2000)
+        await downloadMissingDataForDate(date, currencyConfig).catch(e => {
+            console.log(`Waiting 2 s before making new requests`);
+            delay(config.delayBetweenCalls)
+            downloadMissingDataForDate(date, currencyConfig)
+        })
     }
+    let brp = 0
 }
 
 const downloadMissingData = async () => {
     let startTime = new Date();
     for (let curencyConfig of config.currencies) {
+
+        // dataService.removeold(curencyConfig)
 
         let startTimeCurrency = new Date();
         console.log(`Downloading for ${curencyConfig.currency}`);
@@ -94,15 +100,15 @@ const downloadMissingData = async () => {
     }
     console.log(```For all currencies it took
          ${(new Date() - startTime) / 1000} seconds ```);
+         let brp = 0
 }
 
 const startDownloadingInterval = () => {
-    downloadMissingData();
-    setInterval(() => {
-        downloadMissingData();
-    }, 24 * 60 * 60 * 1000)
-
-
+        setInterval(() => {
+            downloadMissingData().catch(e => {
+                console.log(`${e}`);
+            })
+        }, 24 * 60 * 60 * 1000)
 }
 
 module.exports = { startDownloadingInterval }

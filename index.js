@@ -33,7 +33,11 @@ MongoClient.connect(uri, function (err, client) {
     console.log(err);
   } else {
     console.log(`connection established`);
-    databaseService.setDbclient(client);
-    dataDownloader.startDownloadingInterval();
+    try {
+      databaseService.setDbclient(client);
+      dataDownloader.startDownloadingInterval();
+    } catch (e) {
+
+    }
   }
 });
