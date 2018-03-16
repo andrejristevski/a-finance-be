@@ -1,7 +1,7 @@
 const datesBetween = require('dates-between')
 const rp = require('request-promise')
-const dataService = require('./databaseService')
-let config = require('./config')
+const dataService = require('../data-layer/databaseService')
+let config = require('../config')
 
 
 const getDatesBetween = (startDate, endDate) => {
@@ -19,7 +19,6 @@ const getUrlForDate = (date, currency = 'EUR') => {
     let isoDate = shortIsoStringFromDate(date);
     let url = `${config.restApiRatesUrl}${isoDate}?base=${currency}`
     return url;
-
 }
 
 const getDataFromRest = async (url) => {
@@ -44,7 +43,6 @@ const downloadMissingDataForDate = async (date, currencyConfig) => {
         curencyData.exactDateStr = shortIsoStringFromDate(date);
         await dataService.saveDayData(currencyConfig, curencyData)
     }
-
 }
 
 const delay = async (ms) => {
