@@ -17,6 +17,8 @@
     "dates-between": "^1.1.0",
     "dotenv": "^5.0.1",
     "express": "^4.16.2",
+    "moment": "^2.21.0",
+    "moment-range": "^3.1.1",
     "mongodb": "^3.0.3",
     "mongoose": "^5.0.9",
     "request": "^2.83.0",

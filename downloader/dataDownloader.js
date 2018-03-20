@@ -1,16 +1,7 @@
-const datesBetween = require('dates-between')
 const rp = require('request-promise')
 const dataService = require('../data-layer/databaseService')
 let config = require('../config')
 
-
-const getDatesBetween = (startDate, endDate) => {
-    let dates = [];
-    for (let date of datesBetween(startDate, endDate)) {
-        dates.push(date)
-    }
-    return dates;
-}
 
 const shortIsoStringFromDate = (date) =>
     date.toISOString().substr(0, 10)
@@ -41,6 +32,13 @@ const downloadMissingDataForDate = async (date, currencyConfig) => {
     if (curencyData) {
         curencyData.exactDate = date;
         curencyData.exactDateStr = shortIsoStringFromDate(date);
+
+        if (curencyData.base === 'EUR') {
+            curencyData.rates.MKD = 61.5;
+        } else {
+            curencyData.rates.MKD = curencyData.rates.EUR * 61.5;
+        }
+        
         await dataService.saveDayData(currencyConfig, curencyData)
     }
 }
@@ -54,6 +52,16 @@ const delay = async (ms) => {
     })
 }
 
+const getDates = (startDate, endDate) => {
+
+    let res = [];
+    for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
+        res.push(new Date(d));
+    }
+
+    return res;
+}
+
 const downloadMissingDataForCurrency = async (currencyConfig) => {
 
     let latestDownloadedForCcy = await dataService.getLatestDownloadedForCcy(currencyConfig);
@@ -62,21 +70,22 @@ const downloadMissingDataForCurrency = async (currencyConfig) => {
 
     if (latestDownloadedForCcy.toISOString().substr(0, 10) === endDate.toISOString().substr(0, 10)) {
         console.log(`All dates already downloaded for ${currencyConfig.currency}`);
-        return
+        // return
     }
 
-    endDate.setDate(endDate.getDate()-1);
-    let datesToBeDownloaded = getDatesBetween(latestDownloadedForCcy, endDate);
+    let startDate = new Date(latestDownloadedForCcy);
+    startDate.setDate(latestDownloadedForCcy.getDate() + 1)
+
+    let datesToBeDownloaded = getDates(startDate, endDate);
+
 
     for (date of datesToBeDownloaded) {
 
-        await delay(2000)
+        await delay(config.delayBetweenCalls)
         await downloadMissingDataForDate(date, currencyConfig).catch(e => {
-            delay(config.delayBetweenCalls)
             downloadMissingDataForDate(date, currencyConfig)
         })
     }
-    let brp = 0
 }
 
 const downloadMissingData = async () => {
@@ -100,12 +109,12 @@ const downloadMissingData = async () => {
 }
 
 const startDownloadingInterval = () => {
-        downloadMissingData()
-        setInterval(() => {
-            downloadMissingData().catch(e => {
-                console.log(`${e}`);
-            })
-        }, 24 * 60 * 60 * 1000)
+    downloadMissingData()
+    setInterval(() => {
+        downloadMissingData().catch(e => {
+            console.log(`${e}`);
+        })
+    }, 24 * 60 * 60 * 1000)
 }
 
 module.exports = { startDownloadingInterval }
