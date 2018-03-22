@@ -20,8 +20,7 @@ const getLatestDownloadedForCcy = async (currencyConfig) => {
 const updateLastDownloaded = async (currencyConfig, date) => {
     try {
         let oldObject = await dbClient.db(`${currencyConfig.dbName}`).collection(`${currencyConfig.metadataCollection}`).findOne();
-        return await dbClient.db(`${currencyConfig.dbName}`).collection(`${currencyConfig.metadataCollection}`).updateOne({ '_id': oldObject._id }, { $set: { 'latestDownloadedDate': date } })
-        console.log(`Update metadata to ${date.toISOString().substr(0, 10)}`);
+        await dbClient.db(`${currencyConfig.dbName}`).collection(`${currencyConfig.metadataCollection}`).updateOne({ '_id': oldObject._id }, { $set: { 'latestDownloadedDate': date } })
     } catch (e) {
         console.log(`Error in updateing metadata`);
         console.log(e);
@@ -32,7 +31,9 @@ const saveDayData = async (currencyConfig, data) => {
     try {
         await dbClient.db(`${currencyConfig.dbName}`).collection(`${currencyConfig.ratesCollection}`).insertOne(data)
         await updateLastDownloaded(currencyConfig, data.exactDate);
+
         console.log(`Saved for: ${data.exactDateStr}`);
+
     } catch (e) {
         console.log(`Error saving data : ${e}`);
     }

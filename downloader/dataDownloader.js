@@ -3,8 +3,15 @@ const dataService = require('../data-layer/databaseService')
 let config = require('../config')
 
 
-const shortIsoStringFromDate = (date) =>
-    date.toISOString().substr(0, 10)
+const shortIsoStringFromDate = (date) => {
+
+    let year = date.getFullYear();
+    let month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+    let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+
+    const iso = `${year}-${month}-${day}`
+    return iso;
+}
 
 const getUrlForDate = (date, currency = 'EUR') => {
     let isoDate = shortIsoStringFromDate(date);
@@ -38,7 +45,6 @@ const downloadMissingDataForDate = async (date, currencyConfig) => {
         } else {
             curencyData.rates.MKD = curencyData.rates.EUR * 61.5;
         }
-        
         await dataService.saveDayData(currencyConfig, curencyData)
     }
 }
@@ -46,7 +52,6 @@ const downloadMissingDataForDate = async (date, currencyConfig) => {
 const delay = async (ms) => {
     await new Promise((res, rej) => {
         setTimeout(() => {
-            // console.log(`waiting for ${ms}`);
             res()
         }, ms)
     })
@@ -62,20 +67,31 @@ const getDates = (startDate, endDate) => {
     return res;
 }
 
+const isSameDay = (d1, d2) => {
+    if (d1.getFullYear() === d2.getFullYear()
+        && d1.getMonth() === d2.getMonth()
+        && d1.getDate() === d2.getDate()) {
+        return true;
+    }
+    return false;
+}
+
 const downloadMissingDataForCurrency = async (currencyConfig) => {
 
     let latestDownloadedForCcy = await dataService.getLatestDownloadedForCcy(currencyConfig);
 
     let endDate = new Date();
 
-    if (latestDownloadedForCcy.toISOString().substr(0, 10) === endDate.toISOString().substr(0, 10)) {
+    if (isSameDay(latestDownloadedForCcy, endDate)) {
         console.log(`All dates already downloaded for ${currencyConfig.currency}`);
-        // return
+        return
     }
 
     let startDate = new Date(latestDownloadedForCcy);
     startDate.setDate(latestDownloadedForCcy.getDate() + 1)
 
+    startDate.setHours(10, 0, 0, 0)
+    endDate.setHours(10, 0, 0, 0)
     let datesToBeDownloaded = getDates(startDate, endDate);
 
 
