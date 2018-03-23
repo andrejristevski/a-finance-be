@@ -46,7 +46,17 @@ let config = {
 }
 
 module.exports = config
-    // [
+    
+
+
+
+
+
+
+
+
+
+// [
     //     {
     //         'metadataCollection': 'metaDatatest',
     //         'ratesCollection': "ratestest",

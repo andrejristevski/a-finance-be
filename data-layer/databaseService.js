@@ -1,3 +1,6 @@
+
+const dataUtils = require('../lib/dataAcquires/dataAcquirerUtils')
+
 let dbClient = null;
 
 const setDbclient = (_dbClient) => {
@@ -39,8 +42,17 @@ const saveDayData = async (currencyConfig, data) => {
     }
 }
 
+const getRatesBetweenDates = async (startDate, endDate, inpCur) => {
+
+    let currencyConfig = dataUtils.getConfigForCurency(inpCur)
+    let cursor = await dbClient.db(`${currencyConfig.dbName}`).collection(`${currencyConfig.ratesCollection}`).find({ "exactDate": { "$gt": startDate, "$lte": endDate } })
+
+    return cursor.toArray();
+}
+
 module.exports = {
     setDbclient,
     saveDayData,
     getLatestDownloadedForCcy,
+    getRatesBetweenDates
 }

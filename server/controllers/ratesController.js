@@ -13,15 +13,16 @@ const getBodyProperties = (req) => {
     }
 }
 
-
-const rates = (req, res, next) => {
+const rates = async (req, res, next) => {
     ({
         startDate,
         endDate,
         inpCur,
         outCur
     } = getBodyProperties(req));
-    responseBuilder.getCurrencyPairData(startDate, endDate, inpCur, outCur)
+
+    const response = await responseBuilder.getCurrencyPairData(new Date(startDate), new Date(endDate), inpCur, outCur)
+    res.status(200).send(response)
     next()
 }
 
