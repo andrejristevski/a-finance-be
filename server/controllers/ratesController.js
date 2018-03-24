@@ -1,4 +1,4 @@
-const responseBuilder = require('../../lib/responseBuilder');
+const responseBuilder = require('../../calculation-module/responseBuilder');
 
 const getBodyProperties = (req) => {
     startDate = req.body['startDate']

@@ -1,5 +1,5 @@
 
-const dataUtils = require('../lib/dataAcquires/dataAcquirerUtils')
+const dataUtils = require('../calculation-module/dataAcquires/dataAcquirerUtils')
 
 let dbClient = null;
 
