@@ -2,6 +2,8 @@ const databaseService = require('./databaseService');
 
 const MongoClient = require('mongodb').MongoClient;
 const uri = process.env.CONNECTION_STRING;
+console.log(uri);
+
 
 MongoClient.connect(uri, function (err, client) {
   if (err) {

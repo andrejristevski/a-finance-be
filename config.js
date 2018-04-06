@@ -4,7 +4,8 @@ let config = {
     'ratesCollection': "rates",
     'connectionString': 'somecon string',
     'logDates': true,
-    'delayBetweenCalls': 1000,
+    'delayBetweenCalls': 300,
+    'downloadData': false,
     'currencies':
         [{
             'metadataCollection': 'metaData',

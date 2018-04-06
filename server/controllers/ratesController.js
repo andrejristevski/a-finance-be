@@ -27,14 +27,17 @@ const rates = async (req, res, next) => {
 }
 
 
-const strenght = (req, res, next) => {
+const strenght = async (req, res, next) => {
     ({
         startDate,
         endDate,
-        inpCur,
         outCur
     } = getBodyProperties(req));
 
+    console.log(outCur);
+
+    const response = await responseBuilder.getCurrencyStrenghtData(new Date(startDate), new Date(endDate), outCur);
+    res.status(200).send(response)
     next()
 }
 

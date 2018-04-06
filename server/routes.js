@@ -11,7 +11,7 @@ router.use((req, res, next) => {
 router.get('/alive', testCtrl.testRoute)
 
 router.post('/rates', ratesController.rates)
-router.post('/strenght', ratesController.strenght)
+router.post('/strength', ratesController.strenght)
 router.post('/percentagesum', ratesController.percentagesum)
 
 module.exports = router

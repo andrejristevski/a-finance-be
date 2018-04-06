@@ -1,5 +1,8 @@
 const dataDownloader = require('./dataDownloader');
+const config = require('../config');
 
-dataDownloader.startDownloadingInterval()
+if (config.downloadData) {
+    dataDownloader.startDownloadingInterval()
+}
 
 module.exports = {};
