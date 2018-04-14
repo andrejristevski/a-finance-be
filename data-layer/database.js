@@ -1,7 +1,11 @@
+
+const mongoose = require('mongoose');
 const databaseService = require('./databaseService');
 
 const MongoClient = require('mongodb').MongoClient;
 const uri = process.env.CONNECTION_STRING;
+mongoose.connect(uri);
+
 console.log(uri);
 
 

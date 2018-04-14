@@ -41,7 +41,6 @@ const strenght = async (req, res, next) => {
     next()
 }
 
-
 const percentagesum = (req, res, next) => {
     ({
         startDate,

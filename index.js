@@ -3,6 +3,8 @@
 
 require("dotenv").config();
 
+require('./server/passport/passport');
+
 require('./server/server')
 
 require('./data-layer/database');

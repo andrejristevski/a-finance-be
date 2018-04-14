@@ -1,9 +1,12 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const routes = require('./routes')
+const passport = require('passport')
+
 
 const app = express()
 app.use(bodyParser.json())
+// app.use(passport.initialize())
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
