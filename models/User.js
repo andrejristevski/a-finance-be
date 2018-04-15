@@ -14,29 +14,15 @@ const UserSchema = new Schema({
     }
 })
 
-// UserSchema.pre("save", function (next) {
-//     bcrypt.hash(this.password, 10, (err, hash) => {
-//         this.password = hash;
-//         next();
-//     });
-// });
-
-// schema.methods.comparePassword = function (candidatePassword: string): Promise<boolean> {
-//     let password = this.password;
-//     return new Promise((resolve, reject) => {
-//         bcrypt.compare(candidatePassword, password, (err, success) => {
-//             if (err) return reject(err);
-//             return resolve(success);
-//         });
-//     });
-// };
+UserSchema.pre("save", function (next) {
+    bcrypt.hash(this.password, 10, (err, hash) => {
+        this.password = hash;
+        next();
+    });
+});
 
 UserSchema.methods.comparePassword = function (password, cb) {
-    if (password === this.password) {
-        cb(null, true)
-    } else {
-        cb('err')
-    }
+    return bcrypt.compareSync(password, this.password);
 }
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', UserSchema)
