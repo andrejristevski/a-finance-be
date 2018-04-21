@@ -20,7 +20,6 @@ const signup = (req, res, next) => {
 }
 
 const login = (req, res, next) => {
-
     const passwordIsValid = bcrypt.compareSync(req.body.pass, req.user.password);
     if (!passwordIsValid) return res.status(401).send({ auth: false, token: null });
     let token = jwt.sign({ id: req.user._id }, process.env.SECRET_KEY, {

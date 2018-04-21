@@ -34,7 +34,6 @@ const strenght = async (req, res, next) => {
         outCur
     } = getBodyProperties(req));
 
-    console.log(outCur);
 
     const response = await responseBuilder.getCurrencyStrenghtData(new Date(startDate), new Date(endDate), outCur);
     res.status(200).send(response)
