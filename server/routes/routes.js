@@ -6,7 +6,7 @@ const testCtrl = require('../controllers/testCtrl');
 const ratesController = require('../controllers/ratesController');
 const authController = require('../controllers/authController');
 const exchangeController = require('../controllers/exchangeController');
-const exchangeRoutes = require('./exchangeRoutes');
+const chartsSettingsController = require('../controllers/chartSettingsController');
 
 router.use((req, res, next) => {
     console.log(req.method, req.url);
@@ -26,6 +26,8 @@ router.post('/login', passport.authenticate('local', { session: false }), authCo
 router.post('/exchanges', passport.authenticate('jwt', { session: false }), exchangeController.saveExchange)
 router.get('/exchanges', passport.authenticate('jwt', { session: false }), exchangeController.getExchanges)
 
+router.post('/chartsettings', passport.authenticate('jwt', { session: false }), chartsSettingsController.saveChartsSettings)
+router.get('/chartsettings', passport.authenticate('jwt', { session: false }), chartsSettingsController.getChartsSettings)
 
 
 module.exports = router
