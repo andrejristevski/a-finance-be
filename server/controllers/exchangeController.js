@@ -1,7 +1,4 @@
-const express = require('express')
-    , router = express.Router()
 const ExchangeModel = require('../../models/Exchange')
-
 
 const getExchanges = (req, res) => {
 

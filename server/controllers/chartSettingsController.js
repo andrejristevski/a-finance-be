@@ -1,5 +1,3 @@
-const express = require('express')
-    , router = express.Router()
 const ChartsSettingsModel = require('../../models/ChartsSettings')
 
 
