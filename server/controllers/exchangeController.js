@@ -17,7 +17,8 @@ const saveExchange = (req, res, next) => {
         inputCcy: req.body.inputCcy,
         outCcy: req.body.outCcy,
         date: req.body.date,
-        userId: req.user._id
+        userId: req.user._id,
+        balance: req.body.balance
     };
 
     ExchangeModel.create(exchangeBody, function (err, small) {
@@ -25,8 +26,8 @@ const saveExchange = (req, res, next) => {
             res.status(400).send()
         }
         console.log('Exchange saved');
+        res.status(200).send()
     })
-    res.status(200).send()
 }
 
 module.exports = {

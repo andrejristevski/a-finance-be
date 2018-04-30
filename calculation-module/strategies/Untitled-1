@@ -1,0 +1,69 @@
+random save
+
+
+const utils = require('./stratUtils')
+
+
+const getExchangeLineOverview = (exchangesAndRates, excNumber) => {
+
+    let latestCcyUnits = exchangesAndRates[excNumber].exchange.sum;
+    let targetCcy = exchangesAndRates[excNumber].exchange.inputCcy;
+    let accountBalance = exchangesAndRates[exchangesAndRates.length - 1].exchange.sum;
+    let overallDiff = 0;
+
+    // task da napram da mi racuna na kolku treba da menam za da sum kvit. Kako
+    // so usd so mi e 48 ili so i da bese
+
+    for (let i = excNumber + 1; i < exchangesAndRates.length; i++) {
+        let currentExchange = exchangesAndRates[i].exchange;
+
+        if (currentExchange.outCcy === targetCcy) {
+            // ako se vrakame togas racuna vo sum
+            let currentUnits = currentExchange.sum * currentExchange.exchangeRate;
+            let diff = currentUnits - latestCcyUnits;
+            overallDiff += diff;
+            latestCcyUnits = currentUnits;
+
+        } else if (currentExchange.inputCcy === targetCcy) {
+            // menvame pa racunaj
+        }
+    }
+
+    let res;
+    let currentCcy = exchangesAndRates[exchangesAndRates.length - 1].exchange.outCcy;
+    if (currentCcy !== targetCcy) {
+
+        debugger;
+        let latestRates = exchangesAndRates[exchangesAndRates.length - 1].latestRates.latestOutputRates;
+        let ifWeChangeTodayBalance = accountBalance * latestRates.rates[targetCcy];
+
+        res = {
+            currentCcy,
+            accountBalance,
+            overallDiff,
+            ifWeChangeTodayBalance
+        };
+    }
+
+    
+    res = {
+        currentCcy,
+        accountBalance,
+        overallDiff,
+    };
+
+    return res;
+}
+
+const process = (exchanges) => {
+
+    let res = [];
+    for (let i = 0; i < exchanges.length; i++) {
+        res.push(getExchangeLineOverview(exchanges, i))
+    }
+    return res;
+}
+
+module.exports = {
+    process
+}

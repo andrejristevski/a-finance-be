@@ -8,7 +8,6 @@ mongoose.connect(uri);
 
 console.log(uri);
 
-
 MongoClient.connect(uri, function (err, client) {
   if (err) {
     console.log(err);

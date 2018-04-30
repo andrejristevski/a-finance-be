@@ -63,8 +63,8 @@ const getCurrencyPairData = async (startDate, endDate, inp, out) => {
 const getPerformanceDataForUser = async (user) => {
 
     let data = await userPerformanceAquirer.getData(user);
-    let datasets =  userPerformanceStrategy.process(data);
-    return asd;
+    let response =  userPerformanceStrategy.process(data);
+    return response;
 }
 
 module.exports = {

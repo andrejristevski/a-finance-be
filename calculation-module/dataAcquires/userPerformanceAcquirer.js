@@ -3,29 +3,28 @@ const dataService = require('../../data-layer/databaseService')
 const ExchangeModel = require('../../models/Exchange')
 
 const getProgresiveExchangesRates = async (exchanges) => {
-    // return new Promise(async (resolve, reject) => {
 
     let res = []
 
     for (let i = 0; i < exchanges.length; i++) {
         let exchange = exchanges[i];
 
-        let ccyRates = await dataService.getRatesBetweenDates(exchange.date, new Date(), exchange.inputCcy)
-        // take the rates from exchange date to today and make a graph
-        // res[]
-        debugger
+        let ccyRates = await dataService.getRatesForDate(exchange.date, exchange.inputCcy)
+        let latestInputRates = await dataService.getLatestRatesForCcy(exchange.inputCcy)
+        let latestOutputRates = await dataService.getLatestRatesForCcy(exchange.outCcy)
+
+
         res.push({
-            date: exchange.date,
-            inputCcy: exchange.inputCcy,
-            rates: ccyRates
+            exchange,
+            rates: ccyRates,
+            latestRates: {
+                latestInputRates,
+                latestOutputRates
+            }
         })
-        // inputCcyExchanges.
 
     }
-    debugger
     return res;
-    // resolve(res);
-    // })
 }
 
 
@@ -39,11 +38,8 @@ const getData = async (user) => {
 
             getProgresiveExchangesRates(exchanges)
                 .then(data => {
-                    // napraj realna data i na nea isracunaj
-                    debugger;
-                    
+                    res(data);
                 })
-            // res(exchanges);
         });
     });
 }

@@ -42,6 +42,22 @@ const saveDayData = async (currencyConfig, data) => {
     }
 }
 
+const getRatesForDate = async (date, inpCur) => {
+    let currencyConfig = dataUtils.getConfigForCurency(inpCur);
+
+    let rates = await dbClient.db(`${currencyConfig.dbName}`).collection(`${currencyConfig.ratesCollection}`).findOne({ "exactDate": { "$eq": date } })
+    return rates;
+
+}
+
+const getLatestRatesForCcy = async (inpCur) => {
+    let currencyConfig = dataUtils.getConfigForCurency(inpCur);
+
+    let rates = await dbClient.db(`${currencyConfig.dbName}`).collection(`${currencyConfig.ratesCollection}`).findOne({}, { sort: { $natural: -1 } });
+    return rates;
+
+}
+
 const getRatesBetweenDates = async (startDate, endDate, inpCur) => {
 
     let currencyConfig = dataUtils.getConfigForCurency(inpCur)
@@ -54,5 +70,7 @@ module.exports = {
     setDbclient,
     saveDayData,
     getLatestDownloadedForCcy,
-    getRatesBetweenDates
+    getRatesBetweenDates,
+    getRatesForDate,
+    getLatestRatesForCcy
 }

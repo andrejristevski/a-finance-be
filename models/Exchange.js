@@ -25,6 +25,10 @@ const ExchangeSchema = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
         required: true,
+    },
+    balance: {
+        type: Number,
+        required: true
     }
 })
 
