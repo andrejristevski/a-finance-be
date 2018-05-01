@@ -14,11 +14,13 @@ MongoClient.connect(uri, function (err, client) {
             console.log('setting database client');
             dataUtils.setDbclient(client);
 
-            for (let curencyConfig of config.currencies) {
+            // for (let curencyConfig of config.currencies) {
                 
-                dataUtils.removeolder(curencyConfig)
+            //     dataUtils.removeolder(curencyConfig)
 
-            }
+            // }
+
+            dataUtils.addMkdCollection(config.currencies[0]);
 
         } catch (e) {
             console.log(`${e}`);

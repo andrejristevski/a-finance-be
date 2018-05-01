@@ -5,6 +5,7 @@ const ExchangeModel = require('../../models/Exchange')
 const getProgresiveExchangesRates = async (exchanges) => {
 
     let res = []
+    let latestRatesForCcy = {}
 
     for (let i = 0; i < exchanges.length; i++) {
         let exchange = exchanges[i];
@@ -13,6 +14,7 @@ const getProgresiveExchangesRates = async (exchanges) => {
         let latestInputRates = await dataService.getLatestRatesForCcy(exchange.inputCcy)
         let latestOutputRates = await dataService.getLatestRatesForCcy(exchange.outCcy)
 
+        latestRatesForCcy[exchange.outCcy] = latestOutputRates;
 
         res.push({
             exchange,
@@ -24,7 +26,10 @@ const getProgresiveExchangesRates = async (exchanges) => {
         })
 
     }
-    return res;
+    return {
+        exchangesAndRates: res,
+        latestRatesForCcy
+    };
 }
 
 
